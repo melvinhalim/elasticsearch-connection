@@ -7,37 +7,39 @@ const client = new Client({
 
 //aku buat index "usernames" untuk kebutuhan CRUD
 
-//GET
-//ID must, kalau udah ada ID querynya salahpun tetep GET data sesuai id
-const getElasticSearch = (index, id /*query*/) => {
+// GET;
+const getElasticSearch = (index, query) => {
   async function run() {
-    const { body } = await client.get({
+    const { body } = await client.search({
       index,
-      id,
-      // body: {
-      //   query,
-      // },
+      body: {
+        query,
+      },
     });
     console.log(body);
   }
   run().catch(console.log);
 };
 
-getElasticSearch(
-  "usernames",
-  "1"
-  //,{ match: { username: "melvin0022" },}
-);
+getElasticSearch("usernames", { match: { username: "melvin00223" } });
 
 // DELETE
-const deleteElasticSearch = (index, id) => {
-  client.delete({
-    index,
-    id,
-  });
+const deleteElasticSearch = (index, query) => {
+  async function run() {
+    client.deleteByQuery({
+      index,
+      body: {
+        query,
+      },
+    });
+    console.log("Elastic Search Data Succesfully Removed");
+  }
+  run().catch(console.log);
 };
 
-deleteElasticSearch("usernames", "oQLS93sBjYoXekWtIYid");
+deleteElasticSearch("usernames", {
+  match: { alamat: "alamat terupdate huehue" },
+});
 
 // UPDATE (bisa ubah data, bisa nambahin body)
 const updateElasticSearch = (index, id, doc) => {
@@ -53,13 +55,12 @@ const updateElasticSearch = (index, id, doc) => {
       index,
       id,
     });
-
     console.log(body);
   }
   run().catch(console.log);
 };
 
-updateElasticSearch("usernames", "1", {
+updateElasticSearch("usernames", "oALE93sBjYoXekWt5YjZ", {
   alamat: "alamat terupdate huehue",
 });
 
@@ -76,15 +77,15 @@ const insertElasticSearch = (index, doc) => {
 insertElasticSearch("usernames", { usernames: "tests" });
 
 //COBAIN BUAT INDEX
-// client.indices.create({
-//   index: "testbuatindex",
-// });
+client.indices.create({
+  index: "testbuatindex",
+});
 
 //COBAIN DELETE INDEX
-// async function run() {
-//   client.indices.delete({
-//     index: "testbuatindex",
-//   });
-//   console.log("done");
-// }
-// run().catch(console.log);
+async function run() {
+  client.indices.delete({
+    index: "testbuatindex",
+  });
+  console.log("done");
+}
+run().catch(console.log);
