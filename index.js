@@ -5,23 +5,21 @@ const client = new Client({
   node: process.env.ELASTICSEARCH_NODE,
 });
 
-//aku buat index "usernames" untuk kebutuhan CRUD
+//index "usernames" untuk kebutuhan CRUD nanti didelete kalau udah sesuai
 
 // GET;
-const getElasticSearch = (index, query) => {
+const getElasticSearch = (index, id) => {
   async function run() {
-    const { body } = await client.search({
+    const { body } = await client.get({
       index,
-      body: {
-        query,
-      },
+      id,
     });
     console.log(body);
   }
   run().catch(console.log);
 };
 
-getElasticSearch("usernames", { match: { username: "melvin00223" } });
+getElasticSearch("usernames", "1gLyAHwBjYoXekWt8Ije");
 
 // DELETE
 const deleteElasticSearch = (index, query) => {
@@ -38,10 +36,10 @@ const deleteElasticSearch = (index, query) => {
 };
 
 deleteElasticSearch("usernames", {
-  match: { alamat: "alamat terupdate huehue" },
+  match: { username: "alamat update test" },
 });
 
-// UPDATE (bisa ubah data, bisa nambahin body)
+// // UPDATE (bisa ubah data, bisa nambahin body)
 const updateElasticSearch = (index, id, doc) => {
   async function run() {
     await client.update({
@@ -60,28 +58,26 @@ const updateElasticSearch = (index, id, doc) => {
   run().catch(console.log);
 };
 
-updateElasticSearch("usernames", "oALE93sBjYoXekWt5YjZ", {
-  alamat: "alamat terupdate huehue",
+updateElasticSearch("usernames", "1ALqAHwBjYoXekWtP4j4", {
+  alamat: "alamat update test",
 });
 
-// INSERT
-const insertElasticSearch = (index, doc) => {
+// INSERT;
+const insertElasticSearch = (index, body) => {
   client.index({
     index,
-    body: {
-      doc,
-    },
+    body,
   });
 };
 
-insertElasticSearch("usernames", { usernames: "tests" });
+insertElasticSearch("usernames", { username: "test1235" });
 
-//COBAIN BUAT INDEX
+// //COBAIN BUAT INDEX
 client.indices.create({
   index: "testbuatindex",
 });
 
-//COBAIN DELETE INDEX
+// //COBAIN DELETE INDEX
 async function run() {
   client.indices.delete({
     index: "testbuatindex",
