@@ -7,19 +7,21 @@ const client = new Client({
 
 //index "usernames" untuk kebutuhan CRUD nanti didelete kalau udah sesuai
 
-// GET;
-const getElasticSearch = (index, id) => {
+//GET
+const getElasticSearch = (index, query) => {
   async function run() {
-    const { body } = await client.get({
+    const { body } = await client.search({
       index,
-      id,
+      body: {
+        query,
+      },
     });
-    console.log(body);
+    console.log(body.hits.hits);
   }
   run().catch(console.log);
 };
 
-getElasticSearch("usernames", "1gLyAHwBjYoXekWt8Ije");
+getElasticSearch("usernames", { match: { username: "test1235" } });
 
 // DELETE
 const deleteElasticSearch = (index, query) => {
@@ -39,7 +41,7 @@ deleteElasticSearch("usernames", {
   match: { username: "alamat update test" },
 });
 
-// // UPDATE (bisa ubah data, bisa nambahin body)
+// UPDATE (bisa ubah data, bisa nambahin body)
 const updateElasticSearch = (index, id, doc) => {
   async function run() {
     await client.update({
@@ -71,17 +73,3 @@ const insertElasticSearch = (index, body) => {
 };
 
 insertElasticSearch("usernames", { username: "test1235" });
-
-// //COBAIN BUAT INDEX
-client.indices.create({
-  index: "testbuatindex",
-});
-
-// //COBAIN DELETE INDEX
-async function run() {
-  client.indices.delete({
-    index: "testbuatindex",
-  });
-  console.log("done");
-}
-run().catch(console.log);
